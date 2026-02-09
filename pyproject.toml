@@ -16,7 +16,7 @@ authors = [{ name = "Anton Naumov" }]
 # https://peps.python.org/pep-0508/
 dependencies = [
     "pydantic>=2.12.5",
-    "numpy>=2.1.0",
+    "numpy>=2.0.0",
     "scipy>=1.16.3",
     "matplotlib>=3.10.7",
     "seaborn",
