@@ -96,15 +96,15 @@ class ExperimentSaver:
             if sync_every is not None and step_i%sync_every==0:
                 self.sync_with_s3()
         else:
-            self.trace_func("No R2 secrets provided, skipping R2 sync.")
+            self.trace_func("No S3 secrets provided, skipping S3 sync.")
 
-    def trigger_final_r2_sync(self, model):
+    def trigger_final_s3_sync(self, model):
         # Not saveing optimizer state for final weights to save space
         self.save_training_state("final_weights", "final_weights.pt", model, None, None)
         if self.secrets is not None:
-            self.sync_with_r2()
+            self.sync_with_s3()
         else:
-            self.trace_func("No R2 secrets provided, skipping R2 sync.")
+            self.trace_func("No S3 secrets provided, skipping S3 sync.")
 
     def sync_with_s3(self, extra_exclude_patterns: list[str]=[]):
         if self.secrets is not None:
@@ -118,26 +118,26 @@ class ExperimentSaver:
                     )
                     
                     if int(result["payloadSize"]) + int(result["metadataSize"]) > self.r2_limit_gb * 2**30:
-                        self.trace_func(f"R2 bucket size limit exceeded ({self.r2_limit_gb} GB), not syncing.")
+                        self.trace_func(f"S3 bucket size limit exceeded ({self.r2_limit_gb} GB), not syncing.")
                         do_sync = False
 
                 if do_sync:
-                    self.trace_func("Syncing experiment directory with R2...")
+                    self.trace_func("Syncing experiment directory with S3...")
 
                     if self.s3_sync_checkpoints is False:
                         exclude_patterns = extra_exclude_patterns + ["*.ckpt.pt"]
 
                     sync_s3_bucket(
-                        s3_endpoit=f"https://{self.secrets['CLOUDFLARE_ACCOUNT_ID']}.r2.cloudflarestorage.com",
-                        s3_provider="Cloudflare",
+                        s3_endpoint=self.secrets['AWS_ENDPOINT_URL'],
+                        s3_provider=self.secrets['AWS_PROVIDER'],
                         s3_access_key=self.secrets['AWS_ACCESS_KEY_ID'],
                         s3_secret_access_key=self.secrets['AWS_SECRET_ACCESS_KEY'],
                         path_to_dir=self.exp_dir,
-                        bucket_name="cayleypy",
+                        bucket_name=self.secrets['AWS_BUCKET_NAME'],
                         exclude_patterns=exclude_patterns,
                     )
 
                     self.trace_func("Done.")
                 
             except Exception as e:
-                self.trace_func(f"Error syncing with R2: {e}")
+                self.trace_func(f"Error syncing with S3: {e}")
