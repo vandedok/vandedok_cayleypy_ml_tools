@@ -13,10 +13,10 @@
     },
     "train": {
         "random_walks": {
-            "mode": "nbt",
+            "mode": "classic",
             "length": 25,
             "nbt_history_depth": 25,
-            "width": 4000
+            "width": 1000
         },
         "val_ratio": 0.1,
         "rw_reg": null,
@@ -43,7 +43,7 @@
             },
             "bellman_discount": 0.999,
             "add_random_states": false,
-            "n_updates": 4000,
+            "n_updates": 1000,
             "steps_per_update": 20,
             "bellman_batch_size": 256,
             "in_update_batch_size": 1024,
