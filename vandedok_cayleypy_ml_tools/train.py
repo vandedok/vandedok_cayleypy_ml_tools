@@ -152,27 +152,27 @@ def train_rw_reg(cfg: CayleyMLCfg, graph: CayleyGraph, model: torch.nn.Module, e
     exp_saver.save_training_state("special_checkpoints", f"rw_reg_last", model, optimizer, epoch_i)
 
 
-def train_bfs_reg(cfg: CayleyMLCfg, model, X_bfs, y_bfs):
-    loss_fn = cfg.train.bfs_reg.loss.get_loss_fn()
-    optimizer  = cfg.train.bfs_reg.optimizer.get_optimizer(model.parameters())
+# def train_bfs_reg(cfg: CayleyMLCfg, model, X_bfs, y_bfs):
+#     loss_fn = cfg.train.bfs_reg.loss.get_loss_fn()
+#     optimizer  = cfg.train.bfs_reg.optimizer.get_optimizer(model.parameters())
 
-    # X_train, X_val, y_train, y_val = get_train_val(X_bfs, y_bfs, cfg.train.val_ratio, stratify=False)
-    early_stopper = EarlyStopper(patience=bfs_cfg.early_stop_patience, verbose=EARLY_STOP_VERBOSE, path=None, in_mem_saving=True, trace_func=logger.info)
-    model.train()
+#     # X_train, X_val, y_train, y_val = get_train_val(X_bfs, y_bfs, cfg.train.val_ratio, stratify=False)
+#     early_stopper = EarlyStopper(patience=bfs_cfg.early_stop_patience, verbose=EARLY_STOP_VERBOSE, path=None, in_mem_saving=True, trace_func=logger.info)
+#     model.train()
 
-    # Using weights as bfs dataset is heavily imbalanced
-    _, counts = y_bfs.unique(return_counts=True)
-    total = torch.sum(counts)
-    repeats = (total/counts).int()
-    weights = torch.pow(repeats, 0.5)[y_bfs]
+#     # Using weights as bfs dataset is heavily imbalanced
+#     _, counts = y_bfs.unique(return_counts=True)
+#     total = torch.sum(counts)
+#     repeats = (total/counts).int()
+#     weights = torch.pow(repeats, 0.5)[y_bfs]
 
-    for epoch_i in range(bfs_cfg.num_epochs):       
-        avg_train_loss, _ = regress_epoch_train(X_bfs, None, y_bfs, None, model, loss_fn, optimizer, epoch_i, bfs_cfg.batch_size, weights=weights)
-        logger.info(f"Epoch {epoch_i} | Train Loss: {avg_train_loss:.5f}")
-        early_stopper(avg_train_loss, model)
-        if early_stopper.early_stop:
-            model.load_state_dict(early_stopper.get_model_weights())
-            break
+#     for epoch_i in range(bfs_cfg.num_epochs):       
+#         avg_train_loss, _ = regress_epoch_train(X_bfs, None, y_bfs, None, model, loss_fn, optimizer, epoch_i, bfs_cfg.batch_size, weights=weights)
+#         logger.info(f"Epoch {epoch_i} | Train Loss: {avg_train_loss:.5f}")
+#         early_stopper(avg_train_loss, model)
+#         if early_stopper.early_stop:
+#             model.load_state_dict(early_stopper.get_model_weights())
+#             break
 
 def get_neighbors(X, gens):
     n_actions = gens.shape[0]

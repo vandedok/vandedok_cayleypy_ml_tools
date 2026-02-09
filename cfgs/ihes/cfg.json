@@ -1,0 +1,71 @@
+{
+    "model": {
+        "which": "PermMLP",
+        "y_norm": 50.0,
+        "params": {
+            "hidden_dims": [
+                4096,
+                4096
+            ],
+            "dropout": 0.1,
+            "layer_norm": false
+        }
+    },
+    "train": {
+        "random_walks": {
+            "mode": "nbt",
+            "length": 25,
+            "nbt_history_depth": 25,
+            "width": 4000
+        },
+        "val_ratio": 0.1,
+        "rw_reg": null,
+        "bellman": {
+            "loss": {
+                "which": "MSE",
+                "assym_tau": 0.5,
+                "pred_reg_coef": null,
+                "pred_reg_target": null
+            },
+            "optimizer": {
+                "which": "AdamW",
+                "learning_rate": 0.0001,
+                "weight_decay": 0.0,
+                "betas": [
+                    0.9,
+                    0.999
+                ],
+                "eps": 1e-08,
+                "amsgrad": false,
+                "momentum": 0.0,
+                "dampening": 0.0,
+                "nesterov": false
+            },
+            "bellman_discount": 0.999,
+            "add_random_states": false,
+            "n_updates": 4000,
+            "steps_per_update": 20,
+            "bellman_batch_size": 256,
+            "in_update_batch_size": 1024,
+            "in_update_early_stop_patience": 10,
+            "global_early_stop_patience": -1,
+            "save_every": 100,
+            "save_best": 3,
+            "bfs_for_boundary": 3
+        }
+    },
+    "eval": {
+        "n_trials": 10,
+        "rw_mode": "nbt",
+        "rw_length":  1000,
+        "beam_width": 1024,
+        "beam_max_steps": 50,
+        "beam_mode": "simple",
+        "beam_mitm": false
+    },
+    "logging": {
+        "py_logs": true,
+        "csv_logs": true,
+        "tb_logs": true
+    }
+}
