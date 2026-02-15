@@ -30,6 +30,7 @@ def draw_trajectories(graph, model, trajs_len, trajs_num):
     y_lim = ax.get_ylim()
     ax.plot([0,y_lim[1]], [0,y_lim[1]], c="black", linewidth=1, linestyle='--', alpha=0.8)
     ax.set_ylim([0,y_lim[1]])
+    ax.set_title("Sampled random walks")
     return fig, ax
 
 
